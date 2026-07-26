@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Contador de Scrabble">
+  <rect width="512" height="512" rx="96" fill="#16130f"/>
+  <rect x="64" y="64" width="384" height="384" rx="48" fill="#4a1f26"/>
+  <rect x="64" y="64" width="384" height="384" rx="48" fill="none" stroke="#6d2f38" stroke-width="8"/>
+  <text x="248" y="352" font-family="Georgia, serif" font-size="260" font-weight="bold"
+        fill="#f6ecdc" text-anchor="middle">S</text>
+  <text x="392" y="392" font-family="Georgia, serif" font-size="96" font-weight="bold"
+        fill="#e8b84b" text-anchor="middle">1</text>
+</svg>

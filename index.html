@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Contador de Scrabble</title>
+<meta name="description" content="Cuenta los puntos de tus partidas de Scrabble a partir de una foto del tablero, separando las palabras por jugador.">
+<meta name="theme-color" content="#16130f">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='16' fill='%234a1f26'/><text x='50' y='72' font-size='64' font-family='Georgia' font-weight='bold' fill='%23f6ecdc' text-anchor='middle'>S</text></svg>">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="stylesheet" href="assets/estilos.css?v=2">
+</head>
+<body>
+
+<header class="cabecera">
+  <h1 class="logo">Scrabble<small>Contador de puntos</small></h1>
+
+  <div class="cabecera-acciones">
+    <select id="juego" title="Juego de fichas" style="width:auto"></select>
+    <button class="btn" id="btn-deshacer" title="Borrar la última jugada">↶ Deshacer</button>
+    <button class="btn btn-peligro" id="btn-nueva">Partida nueva</button>
+  </div>
+</header>
+
+<div class="contenido">
+
+  <!-- ================================================= columna izquierda -->
+  <section>
+    <div class="tarjeta">
+      <div class="barra-turno">
+        <span class="chip-turno">Turno de</span>
+        <div class="selector-jugador" id="selector-turno" role="group" aria-label="Jugador de esta jugada"></div>
+        <span style="flex:1"></span>
+        <button class="btn" id="btn-direccion" title="Cambiar dirección de escritura (Tab)">→ Horizontal</button>
+        <button class="btn" id="btn-comodin" aria-pressed="false" title="La siguiente letra vale 0 puntos">Comodín: no</button>
+      </div>
+
+      <div class="tablero-marco">
+        <div class="tablero-capa">
+          <div class="capa-foto" id="capa-foto"></div>
+          <div class="tablero" id="tablero" role="grid" aria-label="Tablero de Scrabble"></div>
+        </div>
+      </div>
+
+      <div class="barra-turno" id="control-fondo" hidden style="margin:12px 0 0">
+        <label class="interruptor">
+          <input type="checkbox" id="ver-foto"> Ver la foto bajo el tablero
+        </label>
+        <label class="interruptor" style="flex:1;min-width:170px">
+          Opacidad
+          <input type="range" id="opacidad-foto" min="10" max="100" value="60" style="flex:1">
+        </label>
+      </div>
+
+      <div class="previsualizacion" id="previsualizacion"></div>
+
+      <div class="barra-turno" style="margin:12px 0 0">
+        <button class="btn btn-primario" id="btn-confirmar" disabled>Registrar jugada</button>
+        <button class="btn" id="btn-cancelar" disabled>Cancelar</button>
+        <span style="flex:1"></span>
+        <span class="pista" style="margin:0">
+          Haz clic en una casilla y escribe · <kbd>Tab</kbd> gira · <kbd>Enter</kbd> registra · <kbd>Esc</kbd> cancela
+        </span>
+      </div>
+
+      <div class="leyenda">
+        <span><i class="muestra" style="background:var(--tp)"></i> Palabra triple</span>
+        <span><i class="muestra" style="background:var(--dp)"></i> Palabra doble</span>
+        <span><i class="muestra" style="background:var(--tl)"></i> Letra triple</span>
+        <span><i class="muestra" style="background:var(--dl)"></i> Letra doble</span>
+        <span><i class="muestra" style="background:var(--j1)"></i> <span id="ley-j1">Jugador 1</span></span>
+        <span><i class="muestra" style="background:var(--j2)"></i> <span id="ley-j2">Jugador 2</span></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================== columna derecha -->
+  <aside>
+
+    <div class="tarjeta">
+      <h2>Marcador</h2>
+      <div class="marcador" id="marcador"></div>
+    </div>
+
+    <div class="tarjeta">
+      <h2>Foto del tablero</h2>
+      <div id="foto-contenedor">
+        <div class="zona-foto" id="zona-foto">
+          <strong>Sube una foto del tablero</strong><br>
+          Arrástrala aquí o haz clic para elegirla.<br>
+          <span style="opacity:.75">Se queda solo en este navegador.</span>
+        </div>
+      </div>
+      <input type="file" id="input-foto" accept="image/*" hidden>
+
+      <!-- ---------------------------------------------- alinear con el tablero -->
+      <div id="panel-alineado" hidden>
+        <p class="pista" style="margin:14px 0 8px">
+          Arrastra los cuatro puntos hasta las <b>esquinas del tablero</b> (donde empiezan
+          las casillas, no el borde de la caja). La rejilla te enseña cómo va a quedar.
+          Si el tablero se sale de la foto, puedes soltar los puntos <b>fuera</b> de la imagen.
+        </p>
+        <div class="alineador-marco">
+          <div class="alineador" id="alineador">
+            <img id="alin-img" alt="Foto para alinear">
+            <svg id="alin-svg" viewBox="0 0 1 1" preserveAspectRatio="none" aria-hidden="true"></svg>
+            <button class="tirador" data-esquina="0" aria-label="Esquina superior izquierda"></button>
+            <button class="tirador" data-esquina="1" aria-label="Esquina superior derecha"></button>
+            <button class="tirador" data-esquina="2" aria-label="Esquina inferior derecha"></button>
+            <button class="tirador" data-esquina="3" aria-label="Esquina inferior izquierda"></button>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
+          <button class="btn btn-primario" id="btn-rectificar">Alinear con el tablero</button>
+          <button class="btn" id="btn-reset-esquinas">Restablecer puntos</button>
+        </div>
+        <div class="pista" id="estado-alineado"></div>
+      </div>
+
+      <details class="avanzado" id="det-ia">
+        <summary>Leer el tablero de la foto con IA</summary>
+        <div>
+          <button class="btn btn-primario" id="btn-leer-ia" style="width:100%">Leer las palabras de la foto</button>
+          <div class="pista" id="estado-ia"></div>
+
+          <details class="avanzado" id="det-clave">
+            <summary>Usar mi propia clave de API</summary>
+            <div>
+              <div class="aviso-caja" style="margin-bottom:10px">
+                Solo hace falta si abres la app como archivo local o si el servidor no tiene
+                clave configurada. Se guarda únicamente en este navegador
+                (<code>localStorage</code>) y se envía solo a <code>api.anthropic.com</code>.
+                No la uses en un equipo compartido.
+              </div>
+              <label class="campo" for="clave-api">Clave de API (sk-ant-…)</label>
+              <input type="password" id="clave-api" placeholder="sk-ant-..." autocomplete="off">
+              <button class="btn" id="btn-olvidar-clave" style="margin-top:10px">Olvidar clave</button>
+            </div>
+          </details>
+
+          <div class="pista">
+            Funciona mucho mejor si antes alineas la foto. La IA detecta las palabras y sus
+            posiciones; después revisa el orden y de quién es cada una en la lista de jugadas
+            — el orden importa porque las casillas premium solo cuentan la primera vez.
+          </div>
+        </div>
+      </details>
+    </div>
+
+    <div class="tarjeta">
+      <h2>Fichas que quedan <span id="total-bolsa" style="color:var(--tinta-suave);font-weight:400"></span></h2>
+      <div class="bolsa" id="bolsa"></div>
+      <div class="pista">Cuenta las fichas que no están en el tablero: las de la bolsa más las de los dos atriles.</div>
+    </div>
+
+    <div class="tarjeta">
+      <h2>Añadir palabra a mano</h2>
+      <div class="campos">
+        <div class="fila-campos">
+          <div>
+            <label class="campo" for="f-palabra">Palabra</label>
+            <input type="text" id="f-palabra" placeholder="CASA" autocomplete="off" spellcheck="false">
+          </div>
+          <div>
+            <label class="campo" for="f-fila">Fila</label>
+            <input type="number" id="f-fila" min="1" max="15" placeholder="8">
+          </div>
+          <div>
+            <label class="campo" for="f-col">Col.</label>
+            <input type="number" id="f-col" min="1" max="15" placeholder="8">
+          </div>
+          <div>
+            <label class="campo" for="f-dir">Dir.</label>
+            <select id="f-dir">
+              <option value="H">→</option>
+              <option value="V">↓</option>
+            </select>
+          </div>
+        </div>
+        <button class="btn btn-primario" id="btn-anadir-palabra">Añadir al jugador del turno</button>
+      </div>
+      <div class="pista">
+        Escribe la palabra <b>completa</b> tal como se ve en el tablero (incluidas las letras
+        que ya estaban). Comodín: <code>?E</code>. Dígrafos en español: <code>CA[RR]O</code>.
+      </div>
+    </div>
+
+    <div class="tarjeta">
+      <h2>Jugadas <span id="contador-jugadas" style="color:var(--tinta-suave);font-weight:400"></span></h2>
+      <ul class="jugadas" id="lista-jugadas"></ul>
+    </div>
+
+  </aside>
+</div>
+
+<div class="visor" id="visor"><img id="visor-img" alt="Foto del tablero ampliada"></div>
+<div class="toast" id="toast"></div>
+<input class="entrada-fantasma" id="entrada-fantasma" autocomplete="off" autocorrect="off" autocapitalize="characters" spellcheck="false">
+
+<script src="assets/motor.js?v=2"></script>
+<script src="assets/alinear.js?v=2"></script>
+<script src="assets/app.js?v=2"></script>
+<script>
+  /* Permite instalar la app y usarla sin conexión (solo sobre https) */
+  if ('serviceWorker' in navigator && location.protocol === 'https:') {
+    addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
+  }
+</script>
+</body>
+</html>

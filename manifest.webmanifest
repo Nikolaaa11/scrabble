@@ -1,0 +1,16 @@
+{
+  "name": "Contador de Scrabble",
+  "short_name": "Scrabble",
+  "description": "Cuenta los puntos de tus partidas de Scrabble a partir de una foto del tablero, separando las palabras por jugador.",
+  "start_url": ".",
+  "scope": ".",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#16130f",
+  "theme_color": "#16130f",
+  "lang": "es",
+  "icons": [
+    { "src": "icono.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" },
+    { "src": "icono.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "maskable" }
+  ]
+}

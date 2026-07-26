@@ -1,0 +1,21 @@
+# Fotos personales del tablero: se quedan solo en tu equipo
+*.jpg
+*.jpeg
+*.png
+!icono.png
+
+# Archivos temporales de pruebas
+_*.js
+
+# Sistema y editores
+Thumbs.db
+desktop.ini
+.DS_Store
+.vscode/
+.idea/
+
+# Node / Vercel (por si algún día se añade tooling)
+node_modules/
+.vercel
+.env
+.env.local
