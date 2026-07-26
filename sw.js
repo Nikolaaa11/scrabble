@@ -44,6 +44,8 @@ self.addEventListener('fetch', (ev) => {
         caches.open(CACHE).then((c) => c.put(ev.request, copia)).catch(() => {});
         return resp;
       })
-      .catch(() => caches.match(ev.request).then((r) => r || caches.match('index.html')))
+      /* ignoreSearch: los assets se piden con ?v=N y en caché están sin él */
+      .catch(() => caches.match(ev.request, { ignoreSearch: true })
+        .then((r) => r || caches.match('index.html')))
   );
 });
