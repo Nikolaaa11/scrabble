@@ -8,7 +8,7 @@
 <meta name="theme-color" content="#16130f">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='16' fill='%234a1f26'/><text x='50' y='72' font-size='64' font-family='Georgia' font-weight='bold' fill='%23f6ecdc' text-anchor='middle'>S</text></svg>">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="stylesheet" href="assets/estilos.css?v=2">
+<link rel="stylesheet" href="assets/estilos.css?v=3">
 </head>
 <body>
 
@@ -150,6 +150,7 @@
     <div class="tarjeta">
       <h2>Fichas que quedan <span id="total-bolsa" style="color:var(--tinta-suave);font-weight:400"></span></h2>
       <div class="bolsa" id="bolsa"></div>
+      <div class="pista" id="aviso-bolsa"></div>
       <div class="pista">Cuenta las fichas que no están en el tablero: las de la bolsa más las de los dos atriles.</div>
     </div>
 
@@ -197,9 +198,9 @@
 <div class="toast" id="toast"></div>
 <input class="entrada-fantasma" id="entrada-fantasma" autocomplete="off" autocorrect="off" autocapitalize="characters" spellcheck="false">
 
-<script src="assets/motor.js?v=2"></script>
-<script src="assets/alinear.js?v=2"></script>
-<script src="assets/app.js?v=2"></script>
+<script src="assets/motor.js?v=3"></script>
+<script src="assets/alinear.js?v=3"></script>
+<script src="assets/app.js?v=3"></script>
 <script>
   /* Permite instalar la app y usarla sin conexión (solo sobre https) */
   if ('serviceWorker' in navigator && location.protocol === 'https:') {

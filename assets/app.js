@@ -614,15 +614,25 @@
 
     const celda = (etiqueta, n, valor) => {
       const clases = ['ficha-bolsa'];
-      if (n <= 0) clases.push('agotada');
+      if (n < 0) clases.push('sobran');
+      else if (n === 0) clases.push('agotada');
       else if (n === 1) clases.push('pocas');
       return `<div class="${clases.join(' ')}" title="${esc(etiqueta)} · ${valor} puntos">
-        ${esc(etiqueta)}<small>${Math.max(0, n)}</small></div>`;
+        ${esc(etiqueta)}<small>${n}</small></div>`;
     };
 
     $('#bolsa').innerHTML =
       Object.keys(juego.cantidades).map((ch) => celda(ch, quedan[ch], juego.valores[ch])).join('') +
       celda('▢', comodines, 0);
+
+    /* Más fichas de una letra en el tablero que las que trae el juego: o alguna
+       es en realidad un comodín, o la lectura del tablero tiene un error. */
+    const sobran = Object.keys(quedan).filter((ch) => quedan[ch] < 0);
+    if (comodines < 0) sobran.push('comodines');
+    $('#aviso-bolsa').innerHTML = sobran.length
+      ? `<span class="msg-error">Hay más ${sobran.join(', ')} en el tablero que en el juego.</span>
+         Revisa si alguna es en realidad un comodín, o si te has equivocado al leer una letra.`
+      : '';
   }
 
   /* ------------------------------------------------------ lectura con IA */

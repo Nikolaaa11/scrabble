@@ -513,6 +513,8 @@ button { cursor: pointer; }
 .ficha-bolsa small { display: block; font-weight: 400; font-size: 11px; color: var(--tinta-suave); }
 .ficha-bolsa.agotada { opacity: .32; }
 .ficha-bolsa.pocas small { color: var(--aviso); }
+.ficha-bolsa.sobran { border-color: var(--error); background: rgba(232, 116, 106, .1); }
+.ficha-bolsa.sobran small { color: var(--error); font-weight: 700; }
 
 .visor {
   position: fixed;
